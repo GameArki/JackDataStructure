@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
-using FixMath.NET;
+using UnityEngine;
 
-namespace JackFrame.FPMath {
+namespace JackFrame.DataStructure {
 
     // 插入: 按 Bounds 插入
     // 移除: 按 FullID 移除
     // 查询: 按 Bounds 查询
     // 遍历: 全遍历
-    public class FPQuadTreeNode<T> {
+    public class QuadTreeNode<T> {
 
         // ==== Define ====
         static class LocationConfig {
@@ -37,8 +37,8 @@ namespace JackFrame.FPMath {
         const int TR_INDEX = 3;
 
         // ==== External ====
-        Ptr_FPQuadTree treePtr;
-        FPQuadTree<T> Tree => treePtr as FPQuadTree<T>;
+        Ptr_QuadTree treePtr;
+        QuadTree<T> Tree => treePtr as QuadTree<T>;
 
         // ==== Info ====
         uint locationID;
@@ -50,8 +50,8 @@ namespace JackFrame.FPMath {
         object valuePtr;
         public T Value => (T)valuePtr;
 
-        FPBounds2 bounds;
-        public FPBounds2 Bounds => bounds;
+        Bounds2 bounds;
+        public Bounds2 Bounds => bounds;
 
         int depth;
         void SetDepth(int value) => depth = value;
@@ -59,18 +59,18 @@ namespace JackFrame.FPMath {
         bool isSplit;
 
         // 存储叶
-        Dictionary<uint, FPQuadTreeNode<T>> children;
+        Dictionary<uint, QuadTreeNode<T>> children;
 
         // 分割 四块分支
-        FPQuadTreeNode<T>[] splitedArray; // len: 4
+        QuadTreeNode<T>[] splitedArray; // len: 4
 
-        internal FPQuadTreeNode(Ptr_FPQuadTree tree, in FPBounds2 bounds, int depth) {
+        internal QuadTreeNode(Ptr_QuadTree tree, in Bounds2 bounds, int depth) {
             this.treePtr = tree;
             this.isSplit = false;
             this.bounds = bounds;
             this.depth = depth;
-            this.children = new Dictionary<uint, FPQuadTreeNode<T>>();
-            this.splitedArray = new FPQuadTreeNode<T>[4];
+            this.children = new Dictionary<uint, QuadTreeNode<T>>();
+            this.splitedArray = new QuadTreeNode<T>[4];
         }
 
         internal void SetAsRoot() {
@@ -115,7 +115,7 @@ namespace JackFrame.FPMath {
             return valuePtr != null;
         }
 
-        bool IsIntersectOrContains(in FPBounds2 other) {
+        bool IsIntersectOrContains(in Bounds2 other) {
             return bounds.IsIntersect(other) || bounds.IsContains(other);
         }
 
@@ -124,7 +124,7 @@ namespace JackFrame.FPMath {
         }
 
         // ==== Traval ====
-        internal void Traval(Action<FPQuadTreeNode<T>> action) {
+        internal void Traval(Action<QuadTreeNode<T>> action) {
 
             action.Invoke(this);
 
@@ -141,7 +141,7 @@ namespace JackFrame.FPMath {
 
         }
 
-        void VisitCorner(byte corner, Action<FPQuadTreeNode<T>> action) {
+        void VisitCorner(byte corner, Action<QuadTreeNode<T>> action) {
 
             if (corner == LocationConfig.NONE) {
                 return;
@@ -180,11 +180,11 @@ namespace JackFrame.FPMath {
         }
 
         // ==== Insert ====
-        internal FPQuadTreeNode<T> Insert(T valuePtr, in FPBounds2 bounds) {
+        internal QuadTreeNode<T> Insert(T valuePtr, in Bounds2 bounds) {
 
             int nextDepth = depth + 1;
 
-            var node = new FPQuadTreeNode<T>(treePtr, bounds, nextDepth);
+            var node = new QuadTreeNode<T>(treePtr, bounds, nextDepth);
             node.onlyID = Tree.GenOnlyID();
             node.SetAsLeaf(valuePtr);
 
@@ -194,7 +194,7 @@ namespace JackFrame.FPMath {
 
         }
 
-        void InsertNode(FPQuadTreeNode<T> node, uint parentLocationID, byte cornerID, int parentDepth) {
+        void InsertNode(QuadTreeNode<T> node, uint parentLocationID, byte cornerID, int parentDepth) {
 
             SetAsBranch();
 
@@ -215,7 +215,7 @@ namespace JackFrame.FPMath {
 
         }
 
-        void InsertNodeWhenSplit(FPQuadTreeNode<T> node) {
+        void InsertNodeWhenSplit(QuadTreeNode<T> node) {
 
             var nodeBounds = node.bounds;
 
@@ -241,7 +241,7 @@ namespace JackFrame.FPMath {
 
         }
 
-        void InsertNodeWhenNotSplit(FPQuadTreeNode<T> node) {
+        void InsertNodeWhenNotSplit(QuadTreeNode<T> node) {
 
             // Children 小于 4 个时, 插入
             if (children.Count < 4) {
@@ -260,31 +260,31 @@ namespace JackFrame.FPMath {
         void Split() {
 
             int nextDepth = depth + 1;
-            var size = bounds.Size * FP64.Half;
-            var halfSize = size * FP64.Half;
+            var size = bounds.Size * 0.5f;
+            var halfSize = size * 0.5f;
             var center = bounds.Center;
 
-            var blBounds = new FPBounds2(center - halfSize, size);
-            var brBounds = new FPBounds2(new FPVector2(center.x + halfSize.x, center.y - halfSize.y), size);
-            var tlBounds = new FPBounds2(new FPVector2(center.x - halfSize.x, center.y + halfSize.y), size);
-            var trBounds = new FPBounds2(center + halfSize, size);
+            var blBounds = new Bounds2(center - halfSize, size);
+            var brBounds = new Bounds2(new Vector2(center.x + halfSize.x, center.y - halfSize.y), size);
+            var tlBounds = new Bounds2(new Vector2(center.x - halfSize.x, center.y + halfSize.y), size);
+            var trBounds = new Bounds2(center + halfSize, size);
 
-            var bl = new FPQuadTreeNode<T>(treePtr, blBounds, nextDepth);
+            var bl = new QuadTreeNode<T>(treePtr, blBounds, nextDepth);
             bl.SetLocationID(GenBranchLocationID(locationID, LocationConfig.BL, depth));
             bl.onlyID = Tree.GenOnlyID();
             splitedArray[BL_INDEX] = bl;
 
-            var br = new FPQuadTreeNode<T>(treePtr, brBounds, nextDepth);
+            var br = new QuadTreeNode<T>(treePtr, brBounds, nextDepth);
             br.SetLocationID(GenBranchLocationID(locationID, LocationConfig.BR, depth));
             br.onlyID = Tree.GenOnlyID();
             splitedArray[BR_INDEX] = br;
 
-            var tl = new FPQuadTreeNode<T>(treePtr, tlBounds, nextDepth);
+            var tl = new QuadTreeNode<T>(treePtr, tlBounds, nextDepth);
             tl.SetLocationID(GenBranchLocationID(locationID, LocationConfig.TL, depth));
             tl.onlyID = Tree.GenOnlyID();
             splitedArray[TL_INDEX] = tl;
 
-            var tr = new FPQuadTreeNode<T>(treePtr, trBounds, nextDepth);
+            var tr = new QuadTreeNode<T>(treePtr, trBounds, nextDepth);
             tr.SetLocationID(GenBranchLocationID(locationID, LocationConfig.TR, depth));
             tr.onlyID = Tree.GenOnlyID();
             splitedArray[TR_INDEX] = tr;
@@ -321,7 +321,7 @@ namespace JackFrame.FPMath {
         }
 
         // ==== Query ====
-        internal void GetCandidateNodes(in FPBounds2 bounds, HashSet<FPQuadTreeNode<T>> candidates) {
+        internal void GetCandidateNodes(in Bounds2 bounds, HashSet<QuadTreeNode<T>> candidates) {
 
             if (IsLeaf()) {
                 candidates.Add(this);
@@ -350,7 +350,7 @@ namespace JackFrame.FPMath {
 
         }
 
-        internal void GetCandidateValues(in FPBounds2 bounds, HashSet<T> candidates) {
+        internal void GetCandidateValues(in Bounds2 bounds, HashSet<T> candidates) {
 
             if (IsLeaf()) {
                 candidates.Add(Value);

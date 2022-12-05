@@ -1,6 +1,6 @@
 using System;
 
-namespace JackFrame.FPMath {
+namespace JackFrame.DataStructure {
 
     public struct uint128 {
 

@@ -1,27 +1,27 @@
 using System;
 using System.Collections.Generic;
-using FixMath.NET;
+using UnityEngine;
 
-namespace JackFrame.FPMath {
+namespace JackFrame.DataStructure {
 
-    internal interface Ptr_FPOctree {}
+    internal interface Ptr_Octree {}
 
-    public class FPOctree<T> : Ptr_FPOctree {
+    public class Octree<T> : Ptr_Octree {
 
         int maxDepth;
         public int MaxDepth => maxDepth;
 
         uint onlyIDRecord;
 
-        FPOctreeNode<T> root;
+        OctreeNode<T> root;
 
-        public FPOctree(FP64 worldWidth, FP64 worldHeight, FP64 worldLength, int maxDepth) {
+        public Octree(float worldWidth, float worldHeight, float worldLength, int maxDepth) {
             if (maxDepth > 8) {
                 throw new Exception("Max depth must be less than 8");
             }
 
             this.maxDepth = maxDepth;
-            this.root = new FPOctreeNode<T>(this, new FPBounds3(FPVector3.Zero, new FPVector3(worldWidth, worldHeight, worldLength)), 0);
+            this.root = new OctreeNode<T>(this, new Bounds3(Vector3.zero, new Vector3(worldWidth, worldHeight, worldLength)), 0);
             this.root.SetAsRoot();
         }
 
@@ -30,7 +30,7 @@ namespace JackFrame.FPMath {
             return onlyIDRecord;
         }
 
-        public FPOctreeNode<T> Insert(T value, FPBounds3 bounds) {
+        public OctreeNode<T> Insert(T value, Bounds3 bounds) {
             return root.Insert(value, bounds);
         }
 
@@ -38,15 +38,15 @@ namespace JackFrame.FPMath {
             root.RemoveNode(fullID);
         }
 
-        public void GetCandidateNodes(in FPBounds3 bounds, HashSet<FPOctreeNode<T>> candidates) {
+        public void GetCandidateNodes(in Bounds3 bounds, HashSet<OctreeNode<T>> candidates) {
             root.GetCandidateNodes(bounds, candidates);
         }
 
-        public void GetCandidateValues(in FPBounds3 bounds, HashSet<T> candidates) {
+        public void GetCandidateValues(in Bounds3 bounds, HashSet<T> candidates) {
             root.GetCandidateValues(bounds, candidates);
         }
 
-        public void Traval(Action<FPOctreeNode<T>> action) {
+        public void Traval(Action<OctreeNode<T>> action) {
             root.Traval(action);
         }
 

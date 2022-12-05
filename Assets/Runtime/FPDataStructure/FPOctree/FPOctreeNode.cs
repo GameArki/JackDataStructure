@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using FixMath.NET;
 
-namespace JackFrame.FPMath {
+namespace JackFrame.FPDataStructure {
 
     public class FPOctreeNode<T> {
 
