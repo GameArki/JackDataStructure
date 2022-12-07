@@ -1,0 +1,22 @@
+{
+  "name": "com.frame.jackdatastructure",
+  "version": "0.1.0",
+  "description": "数据结构库, 用于游戏开发, 含浮点数和定点数版",
+  "displayName": "JackDataStructure",
+  "unity": "2019.4",
+  "author": {
+    "name": "杰克有茶",
+    "email": "chenwansal1@163.com",
+    "url": "http://www.utea.fun"
+  },
+  "changelogUrl": "",
+  "dependencies": {},
+  "documentationUrl": "",
+  "hideInEditor": false,
+  "keywords": [
+  ],
+  "license": "",
+  "licensesUrl": "",
+  "samples": [],
+  "unityRelease": "16f1"
+}
