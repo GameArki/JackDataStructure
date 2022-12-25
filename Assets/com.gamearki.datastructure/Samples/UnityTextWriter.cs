@@ -2,7 +2,7 @@ using System.Text;
 using System.IO;
 using UnityEngine;
 
-namespace JackFrame.FPDataStructure.Sample {
+namespace GameArki.FPDataStructure.Sample {
 
     public class UnityTextWriter : TextWriter {
 

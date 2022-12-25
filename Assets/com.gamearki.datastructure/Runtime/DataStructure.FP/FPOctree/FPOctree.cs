@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using FixMath.NET;
 
-namespace JackFrame.FPDataStructure {
+namespace GameArki.FPDataStructure {
 
     internal interface Ptr_FPOctree {}
 

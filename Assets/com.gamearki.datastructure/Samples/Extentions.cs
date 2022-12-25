@@ -1,7 +1,7 @@
 using UnityEngine;
 using FixMath.NET;
 
-namespace JackFrame.FPDataStructure.Sample {
+namespace GameArki.FPDataStructure.Sample {
 
     public static class Extentions {
 

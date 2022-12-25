@@ -1,5 +1,5 @@
 {
-    "name": "JackFrame.FPDataStructure",
+    "name": "GameArki.DataStructure.FP",
     "rootNamespace": "",
     "references": [
         "GUID:456740c386b308542be128e7c798eefb"

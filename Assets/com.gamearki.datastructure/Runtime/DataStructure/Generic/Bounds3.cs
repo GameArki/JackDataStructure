@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace JackFrame.DataStructure {
+namespace GameArki.DataStructure {
 
     public struct Bounds3 {
 

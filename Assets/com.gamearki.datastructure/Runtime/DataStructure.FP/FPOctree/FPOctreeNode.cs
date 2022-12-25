@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using FixMath.NET;
 
-namespace JackFrame.DataStructure {
+namespace GameArki.FPDataStructure {
 
-    public class OctreeNode<T> {
+    public class FPOctreeNode<T> {
 
         // ==== Define ====
         static class LocationConfig {
@@ -42,8 +42,8 @@ namespace JackFrame.DataStructure {
         const int TRB_INDEX = 7;
 
         // ==== External ====
-        Ptr_Octree treePtr;
-        Octree<T> Tree => treePtr as Octree<T>;
+        Ptr_FPOctree treePtr;
+        FPOctree<T> Tree => treePtr as FPOctree<T>;
 
         // ==== Info ====
         ulong locationID;
@@ -56,8 +56,8 @@ namespace JackFrame.DataStructure {
         object valuePtr;
         public T Value => (T)valuePtr;
 
-        Bounds3 bounds;
-        public Bounds3 Bounds => bounds;
+        FPBounds3 bounds;
+        public FPBounds3 Bounds => bounds;
 
         int depth;
         void SetDepth(int value) => depth = value;
@@ -65,18 +65,18 @@ namespace JackFrame.DataStructure {
         bool isSplit;
 
         // 带有值的子节点数量
-        Dictionary<uint, OctreeNode<T>> children;
+        Dictionary<uint, FPOctreeNode<T>> children;
 
         // 分割后的 8 个子节点
-        OctreeNode<T>[] splitedArray; // len: 8
+        FPOctreeNode<T>[] splitedArray; // len: 8
 
-        internal OctreeNode(Ptr_Octree tree, in Bounds3 bounds, int depth) {
+        internal FPOctreeNode(Ptr_FPOctree tree, in FPBounds3 bounds, int depth) {
             this.treePtr = tree;
             this.bounds = bounds;
             this.depth = depth;
             this.onlyID = Tree.GenOnlyID();
-            this.children = new Dictionary<uint, OctreeNode<T>>();
-            this.splitedArray = new OctreeNode<T>[8];
+            this.children = new Dictionary<uint, FPOctreeNode<T>>();
+            this.splitedArray = new FPOctreeNode<T>[8];
         }
 
         internal void SetAsRoot() {
@@ -121,7 +121,7 @@ namespace JackFrame.DataStructure {
             return valuePtr != null;
         }
 
-        bool IsIntersectOrContains(in Bounds3 other) {
+        bool IsIntersectOrContains(in FPBounds3 other) {
             return bounds.IsIntersect(other) || bounds.IsContains(other);
         }
 
@@ -130,7 +130,7 @@ namespace JackFrame.DataStructure {
         }
 
         // ==== Traval ====
-        internal void Traval(Action<OctreeNode<T>> action) {
+        internal void Traval(Action<FPOctreeNode<T>> action) {
 
             action.Invoke(this);
 
@@ -147,7 +147,7 @@ namespace JackFrame.DataStructure {
 
         }
 
-        void VisitCorner(byte corner, Action<OctreeNode<T>> action) {
+        void VisitCorner(byte corner, Action<FPOctreeNode<T>> action) {
 
             if (corner == LocationConfig.NONE) {
                 return;
@@ -207,11 +207,11 @@ namespace JackFrame.DataStructure {
         }
 
         // ==== Insert ====
-        internal OctreeNode<T> Insert(T valuePtr, in Bounds3 bounds) {
+        internal FPOctreeNode<T> Insert(T valuePtr, in FPBounds3 bounds) {
 
             int nextDepth = depth + 1;
 
-            var node = new OctreeNode<T>(treePtr, bounds, nextDepth);
+            var node = new FPOctreeNode<T>(treePtr, bounds, nextDepth);
             node.onlyID = Tree.GenOnlyID();
             node.SetAsLeaf(valuePtr);
 
@@ -219,7 +219,7 @@ namespace JackFrame.DataStructure {
             return node;
         }
 
-        void InsertNode(OctreeNode<T> node, ulong parentLocationID, byte cornerID, int parentDepth) {
+        void InsertNode(FPOctreeNode<T> node, ulong parentLocationID, byte cornerID, int parentDepth) {
 
             SetAsBranch();
 
@@ -240,7 +240,7 @@ namespace JackFrame.DataStructure {
 
         }
 
-        void InsertNodeWhenSplit(OctreeNode<T> node) {
+        void InsertNodeWhenSplit(FPOctreeNode<T> node) {
 
             var nodeBounds = node.bounds;
 
@@ -286,7 +286,7 @@ namespace JackFrame.DataStructure {
 
         }
 
-        void InsertNodeWhenNotSplit(OctreeNode<T> node) {
+        void InsertNodeWhenNotSplit(FPOctreeNode<T> node) {
 
             // Children 小于 4 个时, 插入
             if (children.Count < 4) {
@@ -305,48 +305,48 @@ namespace JackFrame.DataStructure {
         void Split() {
 
             int nextDepth = depth + 1;
-            var size = bounds.Size * 0.5f;
-            var halfSize = size * 0.5f;
+            var size = bounds.Size * FP64.Half;
+            var halfSize = size * FP64.Half;
             var center = bounds.Center;
 
-            var blfBounds = new Bounds3(center - halfSize, size);
-            var brfBounds = new Bounds3(center + new Vector3(halfSize.x, -halfSize.y, -halfSize.z), size);
-            var tlfBounds = new Bounds3(center + new Vector3(-halfSize.x, halfSize.y, -halfSize.z), size);
-            var trfBounds = new Bounds3(center + new Vector3(halfSize.x, halfSize.y, -halfSize.z), size);
-            var blbBounds = new Bounds3(center + new Vector3(-halfSize.x, -halfSize.y, halfSize.z), size);
-            var brbBounds = new Bounds3(center + new Vector3(halfSize.x, -halfSize.y, halfSize.z), size);
-            var tlbBounds = new Bounds3(center + new Vector3(-halfSize.x, halfSize.y, halfSize.z), size);
-            var trbBounds = new Bounds3(center + halfSize, size);
+            var blfBounds = new FPBounds3(center - halfSize, size);
+            var brfBounds = new FPBounds3(center + new FPVector3(halfSize.x, -halfSize.y, -halfSize.z), size);
+            var tlfBounds = new FPBounds3(center + new FPVector3(-halfSize.x, halfSize.y, -halfSize.z), size);
+            var trfBounds = new FPBounds3(center + new FPVector3(halfSize.x, halfSize.y, -halfSize.z), size);
+            var blbBounds = new FPBounds3(center + new FPVector3(-halfSize.x, -halfSize.y, halfSize.z), size);
+            var brbBounds = new FPBounds3(center + new FPVector3(halfSize.x, -halfSize.y, halfSize.z), size);
+            var tlbBounds = new FPBounds3(center + new FPVector3(-halfSize.x, halfSize.y, halfSize.z), size);
+            var trbBounds = new FPBounds3(center + halfSize, size);
 
-            var blf = new OctreeNode<T>(treePtr, blfBounds, nextDepth);
+            var blf = new FPOctreeNode<T>(treePtr, blfBounds, nextDepth);
             blf.SetLocationID(GenBranchLocationID(locationID, LocationConfig.BLF, depth));
             splitedArray[BLF_INDEX] = blf;
 
-            var brf = new OctreeNode<T>(treePtr, brfBounds, nextDepth);
+            var brf = new FPOctreeNode<T>(treePtr, brfBounds, nextDepth);
             brf.SetLocationID(GenBranchLocationID(locationID, LocationConfig.BRF, depth));
             splitedArray[BRF_INDEX] = brf;
 
-            var tlf = new OctreeNode<T>(treePtr, tlfBounds, nextDepth);
+            var tlf = new FPOctreeNode<T>(treePtr, tlfBounds, nextDepth);
             tlf.SetLocationID(GenBranchLocationID(locationID, LocationConfig.TLF, depth));
             splitedArray[TLF_INDEX] = tlf;
 
-            var trf = new OctreeNode<T>(treePtr, trfBounds, nextDepth);
+            var trf = new FPOctreeNode<T>(treePtr, trfBounds, nextDepth);
             trf.SetLocationID(GenBranchLocationID(locationID, LocationConfig.TRF, depth));
             splitedArray[TRF_INDEX] = trf;
 
-            var blb = new OctreeNode<T>(treePtr, blbBounds, nextDepth);
+            var blb = new FPOctreeNode<T>(treePtr, blbBounds, nextDepth);
             blb.SetLocationID(GenBranchLocationID(locationID, LocationConfig.BLB, depth));
             splitedArray[BLB_INDEX] = blb;
 
-            var brb = new OctreeNode<T>(treePtr, brbBounds, nextDepth);
+            var brb = new FPOctreeNode<T>(treePtr, brbBounds, nextDepth);
             brb.SetLocationID(GenBranchLocationID(locationID, LocationConfig.BRB, depth));
             splitedArray[BRB_INDEX] = brb;
 
-            var tlb = new OctreeNode<T>(treePtr, tlbBounds, nextDepth);
+            var tlb = new FPOctreeNode<T>(treePtr, tlbBounds, nextDepth);
             tlb.SetLocationID(GenBranchLocationID(locationID, LocationConfig.TLB, depth));
             splitedArray[TLB_INDEX] = tlb;
 
-            var trb = new OctreeNode<T>(treePtr, trbBounds, nextDepth);
+            var trb = new FPOctreeNode<T>(treePtr, trbBounds, nextDepth);
             trb.SetLocationID(GenBranchLocationID(locationID, LocationConfig.TRB, depth));
             splitedArray[TRB_INDEX] = trb;
 
@@ -382,7 +382,7 @@ namespace JackFrame.DataStructure {
         }
 
         // ==== Query ====
-        internal void GetCandidateNodes(in Bounds3 bounds, HashSet<OctreeNode<T>> candidates) {
+        internal void GetCandidateNodes(in FPBounds3 bounds, HashSet<FPOctreeNode<T>> candidates) {
 
             if (IsLeaf()) {
                 candidates.Add(this);
@@ -411,7 +411,7 @@ namespace JackFrame.DataStructure {
 
         }
 
-        internal void GetCandidateValues(in Bounds3 bounds, HashSet<T> candidates) {
+        internal void GetCandidateValues(in FPBounds3 bounds, HashSet<T> candidates) {
 
             if (IsLeaf()) {
                 candidates.Add(Value);

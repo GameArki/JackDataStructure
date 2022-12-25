@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace JackFrame.DataStructure {
+namespace GameArki.DataStructure {
 
     internal interface Ptr_QuadTree {}
 

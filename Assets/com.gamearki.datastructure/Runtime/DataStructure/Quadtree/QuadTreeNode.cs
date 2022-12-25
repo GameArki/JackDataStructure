@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace JackFrame.DataStructure {
+namespace GameArki.DataStructure {
 
     // 插入: 按 Bounds 插入
     // 移除: 按 FullID 移除

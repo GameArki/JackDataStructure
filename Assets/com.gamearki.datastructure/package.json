@@ -1,19 +1,20 @@
 {
-  "name": "com.frame.jackdatastructure",
-  "version": "0.1.0",
+  "name": "com.gamearki.datastructure",
+  "version": "0.2.0",
   "description": "数据结构库, 用于游戏开发, 含浮点数和定点数版",
-  "displayName": "JackDataStructure",
+  "displayName": "GameArki.DataStructure",
   "unity": "2019.4",
   "author": {
-    "name": "杰克有茶",
+    "name": "GameArki",
     "email": "chenwansal1@163.com",
-    "url": "http://www.utea.fun"
+    "url": "https://www.github.com/GameArki"
   },
   "changelogUrl": "",
   "dependencies": {},
   "documentationUrl": "",
   "hideInEditor": false,
   "keywords": [
+    
   ],
   "license": "",
   "licensesUrl": "",

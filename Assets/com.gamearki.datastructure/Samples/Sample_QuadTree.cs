@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FixMath.NET;
 
-namespace JackFrame.FPDataStructure.Sample {
+namespace GameArki.FPDataStructure.Sample {
 
     public class Sample_QuadTree : MonoBehaviour {
 

@@ -1,6 +1,6 @@
 using System;
 
-namespace JackFrame.DataStructure {
+namespace GameArki.DataStructure {
 
     public struct uint128 {
 

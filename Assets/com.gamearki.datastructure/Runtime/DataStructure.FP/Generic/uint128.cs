@@ -1,6 +1,6 @@
 using System;
 
-namespace JackFrame.FPDataStructure {
+namespace GameArki.FPDataStructure {
 
     public struct uint128 {
 
