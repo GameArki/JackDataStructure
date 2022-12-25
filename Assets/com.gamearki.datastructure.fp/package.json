@@ -1,8 +1,8 @@
 {
-  "name": "com.gamearki.datastructure",
+  "name": "com.gamearki.datastructure.fp",
   "version": "0.2.0",
-  "description": "(浮点数版)数据结构库, 用于游戏开发",
-  "displayName": "GameArki.DataStructure",
+  "description": "(定点数版)数据结构库, 用于游戏开发",
+  "displayName": "GameArki.DataStructure.FP",
   "unity": "2019.4",
   "author": {
     "name": "GameArki",
@@ -14,7 +14,7 @@
   "documentationUrl": "",
   "hideInEditor": false,
   "keywords": [
-
+    
   ],
   "license": "",
   "licensesUrl": "",
